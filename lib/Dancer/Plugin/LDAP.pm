@@ -14,11 +14,11 @@ Dancer::Plugin::LDAP - LDAP plugin for Dancer micro framework
 
 =head1 VERSION
 
-Version 0.0001
+Version 0.0002
 
 =cut
 
-our $VERSION = '0.0001';
+our $VERSION = '0.0002';
 
 
 =head1 SYNOPSIS
@@ -57,12 +57,19 @@ a quick way to do that:
 
     @entries = ldap->quick_select({-or => \%search});
 
+=head2 UTF-8
+
+Attribute values returned by the L<Dancer::Plugin::LDAP::Handle/quick_select> method are
+automatically converted to UTF-8 strings.
+
 =head1 CONFIGURATION
 
     plugins:
         LDAP:
             uri: 'ldap://127.0.0.1:389/'
             base: 'dc=linuxia,dc=de'
+            bind: cn=admin,dc=linuxia,dc=de
+            password: nevairbe
 
 =cut
 

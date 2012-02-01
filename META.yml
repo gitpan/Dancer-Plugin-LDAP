@@ -21,4 +21,4 @@ requires:
   Dancer: 0
   Net::LDAP: 0
   Test::More: 0
-version: 0.0001
+version: 0.0002
