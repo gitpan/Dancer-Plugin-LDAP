@@ -14,11 +14,11 @@ Dancer::Plugin::LDAP - LDAP plugin for Dancer micro framework
 
 =head1 VERSION
 
-Version 0.0002
+Version 0.0010
 
 =cut
 
-our $VERSION = '0.0002';
+our $VERSION = '0.0010';
 
 
 =head1 SYNOPSIS
@@ -129,9 +129,9 @@ register ldap => sub {
                 $handle->{last_connection_check} = time;
                 return $handle->{dbh};
             } else {
- #               Dancer::Logger::debug(
- #                   "Database connection went away, reconnecting"
-#                );
+                Dancer::Logger::debug(
+                    "Database connection went away, reconnecting"
+                );
                 if ($handle->{dbh}) { $handle->{dbh}->disconnect; }
                 return $handle->{dbh}= _get_connection($conn_details);
 
@@ -177,7 +177,11 @@ sub _get_connection {
 	return bless $ldap, 'Dancer::Plugin::LDAP::Handle';
 }
 
+# Check whether the connection is alive
 sub _check_connection {
+    my $ldap = shift;
+    return unless $ldap;
+    return unless $ldap->socket;
 	return 1;
 }
 
