@@ -14,11 +14,11 @@ Dancer::Plugin::LDAP - LDAP plugin for Dancer micro framework
 
 =head1 VERSION
 
-Version 0.0010
+Version 0.0020
 
 =cut
 
-our $VERSION = '0.0010';
+our $VERSION = '0.0020';
 
 
 =head1 SYNOPSIS
@@ -45,6 +45,8 @@ Returns a L<Dancer::Plugin::LDAP::Handle> object, which is a subclass of
 a L<Net::LDAP> handle object, so it does everything you'd expect
 to do with Net::LDAP, but also adds a few convenience methods.  See the documentation
 for L<Dancer::Plugin::LDAP::Handle> for full details of those.
+
+This plugin is compatible to Dancer 1 and Dancer 2.
 
 =head2 TEXT SEARCHES
 
@@ -78,7 +80,7 @@ my %handles;
 my $def_handle = {};
 
 register ldap => sub {
-	my $arg = shift;
+	my ($self, $arg) = plugin_args;
 
 	_load_ldap_settings() unless $settings;
 	
@@ -150,7 +152,7 @@ register ldap => sub {
     }
 };
 
-register_plugin;
+register_plugin for_versions => [ 1, 2 ];
 
 # Try to establish a LDAP connection based on the given settings
 sub _get_connection {
