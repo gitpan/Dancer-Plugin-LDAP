@@ -8,7 +8,7 @@ use Encode;
 
 use base qw(Net::LDAP);
 
-our $VERSION = '0.0020';
+our $VERSION = '0.0040';
 
 =head1 NAME
 
@@ -128,7 +128,7 @@ sub quick_select {
 	my $token = {};
 	my $entry = $mesg->entry($i);
 	
-	$token->{dn} = $self->dn_unescape($entry->dn);
+	$token->{dn} = $self->_utf8_decode($self->dn_unescape($entry->dn));
 	
 	for my $attr ( $entry->attributes ) {
 	    if ($opts{values} eq 'asref') {
@@ -177,11 +177,25 @@ Adds an entry to LDAP directory.
 =cut
 
 sub quick_insert {
-    my ($self, $dn, $ref, %opts) = @_;
+    my ($self, $dn, $origref, %opts) = @_;
     my ($mesg);
 
     # escape DN
     $dn = $self->dn_escape($dn);
+
+    # shallow copy of the ref
+    my $ref = { %$origref };
+
+    # sanitarize the hash, LDAP *hates* empty strings
+    foreach my $k (keys %$ref) {
+        my $value = $ref->{$k};
+        if ((not defined $value) or
+            ((ref($value) eq '') and ($value eq ''))) {
+            # if not defined or an empty string, delete the key
+            Dancer::Logger::debug("$k is empty, ignoring");
+            delete $ref->{$k};
+        }
+    }
 
     Dancer::Logger::debug("LDAP insert, dn: ", $dn, "; data: ", $ref);
 	
